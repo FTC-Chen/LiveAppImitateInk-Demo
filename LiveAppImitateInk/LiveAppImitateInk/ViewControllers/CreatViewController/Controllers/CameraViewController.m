@@ -27,6 +27,7 @@
     //设置背景图片高斯模糊
     [self gaussianImage];
     
+    
     //隐藏状态栏
     //[[UIApplication sharedApplication] setStatusBarHidden:TRUE];
 
