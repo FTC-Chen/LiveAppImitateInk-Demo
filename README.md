@@ -2,4 +2,4 @@
 LiveAppImitateInk
 
 
-IJkFrameWork简书自行下载即可
+IJkFrameWork简书自行下载即可.
