@@ -20,6 +20,10 @@ static NSString *const LiveCOUID = @"LiveCOUID";
 
 @property (nonatomic , strong) NSMutableArray *dataArr;
 
+@property (nonatomic , strong) NSMutableArray *refreshImgArr;
+
+@property (nonatomic , strong)NSString *num;
+
 @end
 
 @implementation LiveListViewController
@@ -35,8 +39,42 @@ static NSString *const LiveCOUID = @"LiveCOUID";
     
     //加载数据
     [self loadLiveData];
-
+    
+    [self setUpRefreshAndRequestMore];
 }
+
+
+- (void) setUpRefreshAndRequestMore{
+    
+    __weak typeof(self) weakSelf = self;
+    
+    MJRefreshGifHeader *gifHeader = [MJRefreshGifHeader headerWithRefreshingBlock:^{
+        
+        [weakSelf.dataArr removeAllObjects];
+        
+        [weakSelf loadLiveData];
+        
+    }];
+    
+    [gifHeader setImages:self.refreshImgArr forState:MJRefreshStatePulling];
+    
+    [gifHeader setImages:self.refreshImgArr forState:MJRefreshStateRefreshing];
+    
+    gifHeader.lastUpdatedTimeLabel.hidden= YES;//如果不隐藏这个会默认 图片在最左边不是在中间
+    
+    gifHeader.stateLabel.hidden = YES;
+    
+    self.couTableView.header = gifHeader;
+    
+    
+//    self.couTableView.footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+//        
+//       // weakSelf.pageIndex ++;
+//        
+//        //[weakSelf requestRefreshData];
+//    }];
+}
+
 
 - (void)loadLiveData{
 
@@ -48,6 +86,8 @@ static NSString *const LiveCOUID = @"LiveCOUID";
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
    
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain", nil];
+    
+    __weak typeof(self) weakSelf = self;
 
     [manager GET:urlStr parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         
@@ -68,7 +108,11 @@ static NSString *const LiveCOUID = @"LiveCOUID";
 
         [weakSelf.couTableView reloadData];
         
+        [weakSelf.couTableView.header endRefreshing];
+        
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
+        
+        [weakSelf.couTableView.header endRefreshing];
         
         NSLog(@"%@",error);
         
@@ -90,6 +134,35 @@ static NSString *const LiveCOUID = @"LiveCOUID";
         [_couTableView registerNib:[UINib nibWithNibName:NSStringFromClass([LiveCell class]) bundle:nil] forCellReuseIdentifier:LiveCOUID];
         
         [_couTableView setTableFooterView:[UIView new]];
+        
+        //刷新图片
+        self.refreshImgArr = [NSMutableArray array];
+        
+        //dropdown_loading_01@2x
+        
+//        for (NSInteger i =1; i<4; i++) {
+//            
+//            UIImage *refreshImg = [UIImage imageNamed:[NSString stringWithFormat:@"dropdown_loading_0%ld@2x",i]];
+//
+//            [self.refreshImgArr addObject:refreshImg];
+//        }
+        
+        
+        for (NSInteger i =1; i<30; i++) {
+            
+            if (i<10) {
+                
+                _num = [NSString stringWithFormat:@"0%ld",i];
+            
+            }else{
+                
+                _num = [NSString stringWithFormat:@"%ld",i];
+            }
+            
+            UIImage *refreshImg = [UIImage imageNamed:[NSString stringWithFormat:@"refresh_fly_00%@.png",_num]];
+            
+            [self.refreshImgArr addObject:refreshImg];
+        }
     }
     
     return _couTableView;

@@ -59,8 +59,9 @@
 }
 
 - (void)setImages:(NSArray *)images forState:(MJRefreshState)state 
-{ 
-    [self setImages:images duration:images.count * 0.1 forState:state]; 
+{
+    //原始为0.1
+    [self setImages:images duration:images.count * 0.04 forState:state];
 }
 
 #pragma mark - 实现父类的方法
@@ -109,4 +110,29 @@
         }
     }
 }
+
+//- (void)layoutSubviews{
+//    
+//    [super layoutSubviews];
+//    
+//    // 指示器 gif图的frame
+//    self.gifView.frame = CGRectMake(self.bounds.origin.x + 20, self.bounds.origin.y + 15, self.bounds.size.width / 4, self.bounds.size.height / 4);
+//    
+//    
+//    if (self.stateLabel.hidden && self.lastUpdatedTimeLabel.hidden) {
+//        
+//        self.gifView.contentMode = UIViewContentModeCenter;
+//        
+//    } else {
+//        
+//        self.gifView.contentMode = UIViewContentModeScaleAspectFit;
+//        
+//        self.gifView.mj_w = self.mj_w * 0.5 - 90;
+//        
+//    }
+//    
+//
+//}
+
+
 @end
